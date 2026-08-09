@@ -1,0 +1,194 @@
+/* Landing page — full-bleed hero with animated multi-color aurora,
+   previewing the accent color each tool uses inside the app. */
+
+.landing { position: relative; overflow-x: hidden; background: var(--paper); }
+
+.landing-nav {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 6vw;
+  position: relative;
+  z-index: 2;
+}
+.landing-nav .brand { display: flex; align-items: center; gap: 8px; }
+.landing-nav .brand-logo { width: 32px; height: 32px; border-radius: 8px; object-fit: cover; }
+.landing-nav .brand-mark { color: var(--amber); font-size: 1.2em; }
+.landing-nav .brand-name { font-family: 'Fraunces', serif; font-size: 1.3rem; font-weight: 700; }
+.landing-nav .brand-name em { font-style: normal; color: var(--amber); }
+.landing-nav .nav-cta {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-decoration: none;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 8px 18px;
+}
+.landing-nav .nav-cta:hover { border-color: var(--ink); }
+
+.hero {
+  position: relative;
+  min-height: 82vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 6vw 60px;
+}
+
+/* Aurora: five drifting blurred blobs, one per accent color, echoing the
+   five tools (Summaries / Chat / Quiz / Flashcards / Planner). */
+.aurora { position: absolute; inset: 0; overflow: hidden; z-index: 0; pointer-events: none; }
+.aurora span {
+  position: absolute;
+  width: 42vw;
+  height: 42vw;
+  max-width: 520px;
+  max-height: 520px;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.55;
+  will-change: transform;
+}
+html[data-theme="dark"] .aurora span { opacity: 0.38; }
+
+.aurora .a1 { background: var(--amber); top: -10%; left: 4%;  animation: drift1 22s ease-in-out infinite alternate; }
+.aurora .a2 { background: var(--violet); top: 6%;  right: 2%; animation: drift2 26s ease-in-out infinite alternate; }
+.aurora .a3 { background: var(--coral); bottom: -14%; left: 18%; animation: drift3 24s ease-in-out infinite alternate; }
+.aurora .a4 { background: var(--teal);  bottom: -8%; right: 14%; animation: drift4 28s ease-in-out infinite alternate; }
+.aurora .a5 { background: var(--sky);   top: 32%; left: 42%; animation: drift5 20s ease-in-out infinite alternate; }
+
+@keyframes drift1 { from { transform: translate(0,0) scale(1); }   to { transform: translate(6%, 8%) scale(1.12); } }
+@keyframes drift2 { from { transform: translate(0,0) scale(1.05); } to { transform: translate(-8%, 6%) scale(0.95); } }
+@keyframes drift3 { from { transform: translate(0,0) scale(0.95); } to { transform: translate(8%, -6%) scale(1.1); } }
+@keyframes drift4 { from { transform: translate(0,0) scale(1); }   to { transform: translate(-6%, -8%) scale(1.08); } }
+@keyframes drift5 { from { transform: translate(-50%,-50%) scale(0.9); } to { transform: translate(-46%, -54%) scale(1.05); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora span { animation: none; }
+}
+
+.hero-inner { position: relative; z-index: 1; max-width: 760px; }
+
+.hero-eyebrow {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 6px 16px;
+  margin-bottom: 22px;
+}
+
+.hero h1 {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(2.4rem, 5.4vw, 4.2rem);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+  margin: 0 0 20px;
+}
+.hero h1 .accent-word {
+  background: linear-gradient(90deg, var(--amber), var(--coral) 30%, var(--violet) 60%, var(--sky));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hero p.lead {
+  font-size: 1.08rem;
+  color: var(--ink-soft);
+  max-width: 52ch;
+  margin: 0 auto 34px;
+  line-height: 1.6;
+}
+
+.hero-actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+
+.btn-primary {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 0.98rem;
+  text-decoration: none;
+  color: #fff;
+  background: linear-gradient(120deg, var(--violet), var(--coral));
+  border-radius: 999px;
+  padding: 14px 30px;
+  box-shadow: 0 10px 30px -10px var(--violet-dim);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 14px 34px -8px var(--violet-dim); }
+
+.btn-ghost {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 13px 26px;
+}
+.btn-ghost:hover { border-color: var(--ink); }
+
+/* Feature strip: previews each tool's own accent color */
+.feature-strip {
+  position: relative;
+  z-index: 1;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 10px 6vw 90px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 18px;
+}
+
+.feature-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 22px 20px;
+  text-align: left;
+}
+.feature-icon {
+  width: 38px; height: 38px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.05rem;
+  margin-bottom: 14px;
+}
+.feature-card.c-amber  .feature-icon { background: var(--amber-dim);  }
+.feature-card.c-violet .feature-icon { background: var(--violet-dim); }
+.feature-card.c-coral  .feature-icon { background: var(--coral-dim);  }
+.feature-card.c-teal   .feature-icon { background: var(--teal-dim);   }
+.feature-card.c-sky    .feature-icon { background: var(--sky-dim);    }
+
+.feature-card h3 {
+  font-family: 'Fraunces', serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 0 0 6px;
+}
+.feature-card p { font-size: 0.87rem; color: var(--ink-soft); line-height: 1.5; margin: 0; }
+
+.landing-footer {
+  position: relative; z-index: 1;
+  text-align: center;
+  padding: 26px 6vw 40px;
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+  border-top: 1px solid var(--line);
+}
+
+@media (max-width: 640px) {
+  .landing-nav .nav-cta { display: none; }
+  .hero { min-height: auto; padding-top: 30px; }
+}

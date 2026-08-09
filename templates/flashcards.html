@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Flashcards{% endblock %}
+{% block accent %}teal{% endblock %}
+{% block content %}
+<div class="eyebrow">Quick recall</div>
+<h1>Flashcards</h1>
+
+<div class="card">
+  <div class="grid">
+    <div class="field">
+      <label>Document</label>
+      <select id="fc-doc">
+        {% for doc_id, doc in docs.items() %}
+          <option value="{{ doc_id }}">{{ doc.filename }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="field">
+      <label>Number of cards</label>
+      <input type="number" id="fc-count" value="10" min="1" max="30">
+    </div>
+  </div>
+  <button id="fc-generate">Generate flashcards</button>
+</div>
+
+<div class="grid" id="fc-container" style="margin-top:20px;"></div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById("fc-generate").addEventListener("click", async () => {
+  const doc_id = document.getElementById("fc-doc").value;
+  const count = parseInt(document.getElementById("fc-count").value, 10);
+  const container = document.getElementById("fc-container");
+  container.innerHTML = "<p>Generating...</p>";
+
+  try {
+    const data = await apiPost("/api/flashcards", { doc_id, count });
+    container.innerHTML = "";
+    data.items.forEach((card) => {
+      const el = document.createElement("div");
+      el.className = "flashcard";
+      el.innerHTML = `
+        <div class="flashcard-inner">
+          <div class="flashcard-face front">${card.question}</div>
+          <div class="flashcard-face back">${card.answer}</div>
+        </div>`;
+      el.addEventListener("click", () => el.classList.toggle("flipped"));
+      container.appendChild(el);
+    });
+  } catch (e) {
+    container.innerHTML = "<p>Error: " + e.message + "</p>";
+  }
+});
+</script>
+{% endblock %}

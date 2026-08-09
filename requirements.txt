@@ -1,0 +1,14 @@
+flask
+python-dotenv
+streamlit
+requests
+authlib
+faiss-cpu
+pypdf
+python-docx
+python-pptx
+sentence-transformers
+reportlab
+torch
+torchvision
+gunicorn

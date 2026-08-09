@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block title %}Quiz Mode{% endblock %}
+{% block accent %}coral{% endblock %}
+{% block content %}
+<div class="eyebrow">Test yourself</div>
+<h1>Quiz mode</h1>
+
+<div class="card">
+  <div class="grid">
+    <div class="field">
+      <label>Document</label>
+      <select id="quiz-doc">
+        {% for doc_id, doc in docs.items() %}
+          <option value="{{ doc_id }}">{{ doc.filename }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="field">
+      <label>Type</label>
+      <select id="quiz-type">
+        <option value="mcq">Multiple Choice</option>
+        <option value="true-false">True / False</option>
+        <option value="fill-blanks">Fill in the Blanks</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Number of questions</label>
+      <input type="number" id="quiz-count" value="5" min="1" max="20">
+    </div>
+  </div>
+  <button id="quiz-generate">Generate quiz</button>
+</div>
+
+<div id="quiz-container"></div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById("quiz-generate").addEventListener("click", async () => {
+  const doc_id = document.getElementById("quiz-doc").value;
+  const type = document.getElementById("quiz-type").value;
+  const count = parseInt(document.getElementById("quiz-count").value, 10);
+  const container = document.getElementById("quiz-container");
+  container.innerHTML = "<p>Generating...</p>";
+
+  const endpoints = { "mcq": "/api/quiz/mcq", "true-false": "/api/quiz/true-false", "fill-blanks": "/api/quiz/fill-blanks" };
+
+  try {
+    const data = await apiPost(endpoints[type], { doc_id, count });
+    render(type, data.items);
+  } catch (e) {
+    container.innerHTML = "<p>Error: " + e.message + "</p>";
+  }
+});
+
+function render(type, items) {
+  const container = document.getElementById("quiz-container");
+  container.innerHTML = "";
+  const card = document.createElement("div");
+  card.className = "card";
+
+  items.forEach((item, idx) => {
+    const wrap = document.createElement("div");
+    wrap.className = "quiz-item";
+
+    if (type === "mcq") {
+      wrap.innerHTML = `<strong>${idx + 1}. ${item.question}</strong>`;
+      item.options.forEach((opt) => {
+        const optEl = document.createElement("div");
+        optEl.className = "option";
+        optEl.textContent = opt;
+        optEl.addEventListener("click", () => {
+          const isCorrect = opt.startsWith(item.answer) || opt === item.answer;
+          optEl.classList.add(isCorrect ? "correct" : "incorrect");
+        });
+        wrap.appendChild(optEl);
+      });
+    } else if (type === "true-false") {
+      wrap.innerHTML = `<strong>${idx + 1}. ${item.statement}</strong>`;
+      ["True", "False"].forEach((label) => {
+        const optEl = document.createElement("div");
+        optEl.className = "option";
+        optEl.textContent = label;
+        optEl.addEventListener("click", () => {
+          const isCorrect = (label === "True") === item.answer;
+          optEl.classList.add(isCorrect ? "correct" : "incorrect");
+        });
+        wrap.appendChild(optEl);
+      });
+    } else {
+      wrap.innerHTML = `<strong>${idx + 1}. ${item.question}</strong>
+        <input type="text" placeholder="Your answer" style="margin-top:8px;">
+        <button class="secondary" style="margin-top:8px;">Reveal answer</button>
+        <span style="display:none; margin-left:8px; color:var(--ink-soft);">${item.answer}</span>`;
+      wrap.querySelector("button").addEventListener("click", (e) => {
+        e.target.nextElementSibling.style.display = "inline";
+      });
+    }
+    card.appendChild(wrap);
+  });
+
+  container.appendChild(card);
+}
+</script>
+{% endblock %}

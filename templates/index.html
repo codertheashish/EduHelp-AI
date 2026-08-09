@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% block title %}Home · EduHelp AI{% endblock %}
+{% block accent %}amber{% endblock %}
+{% block content %}
+<div class="eyebrow">Upload notes</div>
+<h1>Turn your notes into a study session</h1>
+<p style="color:var(--ink-soft); max-width:60ch;">
+  Upload a PDF, DOCX, PPTX, or TXT file. Once processed, you can summarize it,
+  chat with it, or generate quizzes and flashcards from it.
+</p>
+
+<div class="card">
+  <div class="upload-drop" id="drop-zone">
+    <input type="file" id="file-input" accept=".pdf,.docx,.ppt,.pptx,.txt" style="display:none;">
+    <p><strong>Click to choose a file</strong> or drag it here</p>
+    <p style="font-size:0.8rem;">PDF · DOCX · PPTX · TXT</p>
+  </div>
+  <p id="upload-status" style="font-size:0.85rem; color:var(--ink-soft); margin-top:10px;"></p>
+</div>
+
+<h2 style="margin-top:32px;">Your documents</h2>
+<div class="card" id="doc-list">
+  {% if docs %}
+    {% for doc_id, doc in docs.items() %}
+      <span class="doc-pill" data-doc-id="{{ doc_id }}">
+        📄 {{ doc.filename }}
+        <button class="doc-pill-remove" data-doc-id="{{ doc_id }}" title="Remove document" aria-label="Remove {{ doc.filename }}">✕</button>
+      </span>
+    {% endfor %}
+  {% else %}
+    <p style="color:var(--ink-soft);">No documents uploaded yet.</p>
+  {% endif %}
+</div>
+
+<h2 style="margin-top:32px;">Summarize</h2>
+<div class="card">
+  <div class="field">
+    <label>Document</label>
+    <select id="summary-doc">
+      {% for doc_id, doc in docs.items() %}
+        <option value="{{ doc_id }}">{{ doc.filename }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="field">
+    <label>Style</label>
+    <select id="summary-style">
+      <option value="100_words">100 words</option>
+      <option value="300_words" selected>300 words</option>
+      <option value="bullet_points">Bullet points</option>
+    </select>
+  </div>
+  <button id="summarize-btn">Generate summary</button>
+  <button class="secondary" id="export-btn" style="display:none;">Export as PDF</button>
+  <div id="summary-output" style="margin-top:16px; white-space:pre-wrap; font-size:0.92rem;"></div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const dropZone = document.getElementById("drop-zone");
+const fileInput = document.getElementById("file-input");
+const status = document.getElementById("upload-status");
+
+dropZone.addEventListener("click", () => fileInput.click());
+fileInput.addEventListener("change", async () => {
+  if (!fileInput.files.length) return;
+  status.textContent = "Uploading and indexing...";
+  try {
+    const data = await apiUpload(fileInput.files[0]);
+    status.textContent = `Indexed "${data.filename}" (${data.chunks_indexed} chunks). Reloading...`;
+    setTimeout(() => location.reload(), 800);
+  } catch (e) {
+    status.textContent = "Error: " + e.message;
+  }
+});
+
+let lastSummary = "";
+let lastDocId = "";
+
+document.getElementById("summarize-btn").addEventListener("click", async () => {
+  const doc_id = document.getElementById("summary-doc").value;
+  const style = document.getElementById("summary-style").value;
+  const out = document.getElementById("summary-output");
+  if (!doc_id) { out.textContent = "Upload a document first."; return; }
+  out.textContent = "Generating...";
+  try {
+    const data = await apiPost("/api/summary", { doc_id, style });
+    lastSummary = data.summary;
+    lastDocId = doc_id;
+    out.textContent = data.summary;
+    document.getElementById("export-btn").style.display = "inline-block";
+  } catch (e) {
+    out.textContent = "Error: " + e.message;
+  }
+});
+
+document.getElementById("export-btn").addEventListener("click", async () => {
+  const res = await fetch("/api/summary/export", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ doc_id: lastDocId, summary_text: lastSummary }),
+  });
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = "summary.pdf"; a.click();
+});
+
+document.querySelectorAll(".doc-pill-remove").forEach((btn) => {
+  btn.addEventListener("click", async () => {
+    const docId = btn.dataset.docId;
+    if (!confirm("Remove this document?")) return;
+    btn.disabled = true;
+    try {
+      await apiDelete(`/api/documents/${docId}`);
+      location.reload();
+    } catch (e) {
+      alert("Error: " + e.message);
+      btn.disabled = false;
+    }
+  });
+});
+</script>
+{% endblock %}

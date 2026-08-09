@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduHelp AI — Turn notes into a study session</title>
+<link rel="icon" type="image/png" href="{{ url_for('static', filename='images/logo.png') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}">
+</head>
+<body class="landing">
+
+  <div class="aurora" aria-hidden="true">
+    <span class="a1"></span>
+    <span class="a2"></span>
+    <span class="a3"></span>
+    <span class="a4"></span>
+    <span class="a5"></span>
+  </div>
+
+  <nav class="landing-nav">
+    <div class="brand">
+      <img src="{{ url_for('static', filename='images/logo.png') }}" alt="EduHelp AI" class="brand-logo">
+      <span class="brand-name">EduHelp<em>AI</em></span>
+    </div>
+    <a class="nav-cta" href="{{ url_for('login') }}">Sign in →</a>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <span class="hero-eyebrow">AI-powered study companion</span>
+      <h1>Your notes,<br><span class="accent-word">wide awake.</span></h1>
+      <p class="lead">
+        Upload a PDF, DOCX, PPTX, or TXT. EduHelp AI reads it, summarizes it,
+        and turns it into chats, quizzes, and flashcards you can actually
+        study from — all in one place.
+      </p>
+      <div class="hero-actions">
+        <a class="btn-primary" href="{{ url_for('login') }}">Get Started</a>
+        <a class="btn-ghost" href="#features">See what's inside</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="feature-strip" id="features">
+    <div class="feature-card c-amber">
+      <div class="feature-icon">📄</div>
+      <h3>Summaries</h3>
+      <p>Turn a long PDF into a 100-word, 300-word, or bullet-point summary in seconds.</p>
+    </div>
+    <div class="feature-card c-violet">
+      <div class="feature-icon">💬</div>
+      <h3>Chat with Notes</h3>
+      <p>Ask questions about your document and get answers with the exact page cited.</p>
+    </div>
+    <div class="feature-card c-coral">
+      <div class="feature-icon">📝</div>
+      <h3>Quiz Mode</h3>
+      <p>MCQs, true/false, and fill-in-the-blank questions generated from your material.</p>
+    </div>
+    <div class="feature-card c-teal">
+      <div class="feature-icon">🔁</div>
+      <h3>Flashcards</h3>
+      <p>Flip-to-reveal cards for quick recall before an exam.</p>
+    </div>
+    <div class="feature-card c-sky">
+      <div class="feature-icon">🗓️</div>
+      <h3>Study Planner</h3>
+      <p>Give it your exam date and subjects — get a day-by-day study timetable.</p>
+    </div>
+  </section>
+
+  <footer class="landing-footer">
+    Built by students, powered by OpenRouter AI.
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

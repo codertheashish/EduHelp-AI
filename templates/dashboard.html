@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block accent %}amber{% endblock %}
+{% block content %}
+<div class="eyebrow">Overview</div>
+<h1>Dashboard</h1>
+
+<div class="grid">
+  <div class="card">
+    <h3>Documents uploaded</h3>
+    <p style="font-size:2rem; font-family:'Fraunces',serif;">{{ docs|length }}</p>
+  </div>
+  <div class="card">
+    <h3>Quick links</h3>
+    <p><a href="/app">Upload notes</a></p>
+    <p><a href="/chat">Chat with notes</a></p>
+    <p><a href="/quiz">Take a quiz</a></p>
+    <p><a href="/flashcards">Review flashcards</a></p>
+    <p><a href="/planner">Plan your study week</a></p>
+  </div>
+</div>
+
+<h2 style="margin-top:24px;">Your documents</h2>
+<div class="card" id="doc-list">
+  {% if docs %}
+    {% for doc_id, doc in docs.items() %}
+      <span class="doc-pill" data-doc-id="{{ doc_id }}">
+        📄 {{ doc.filename }}
+        <button class="doc-pill-remove" data-doc-id="{{ doc_id }}" title="Remove document" aria-label="Remove {{ doc.filename }}">✕</button>
+      </span>
+    {% endfor %}
+  {% else %}
+    <p style="color:var(--ink-soft);">No documents yet — head to the home page to upload one.</p>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.querySelectorAll(".doc-pill-remove").forEach((btn) => {
+  btn.addEventListener("click", async () => {
+    const docId = btn.dataset.docId;
+    if (!confirm("Remove this document?")) return;
+    btn.disabled = true;
+    try {
+      await apiDelete(`/api/documents/${docId}`);
+      location.reload();
+    } catch (e) {
+      alert("Error: " + e.message);
+      btn.disabled = false;
+    }
+  });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Study Planner{% endblock %}
+{% block accent %}sky{% endblock %}
+{% block content %}
+<div class="eyebrow">Plan ahead</div>
+<h1>Study planner</h1>
+
+<div class="card">
+  <div class="field">
+    <label>Exam date</label>
+    <input type="date" id="exam-date">
+  </div>
+  <div class="field">
+    <label>Available hours per day</label>
+    <input type="number" id="hours-per-day" value="4" min="1" max="16" step="0.5">
+  </div>
+  <div class="field">
+    <label>Subjects (name and priority 1-5)</label>
+    <div id="subjects-list"></div>
+    <button class="secondary" id="add-subject" type="button">+ Add subject</button>
+  </div>
+  <button id="generate-plan">Generate plan</button>
+</div>
+
+<div id="plan-output"></div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const subjectsList = document.getElementById("subjects-list");
+
+function addSubjectRow(name = "", priority = 3) {
+  const row = document.createElement("div");
+  row.style = "display:flex; gap:8px; margin-bottom:8px;";
+  row.innerHTML = `
+    <input type="text" placeholder="Subject name" value="${name}" class="subj-name">
+    <input type="number" min="1" max="5" value="${priority}" class="subj-priority" style="max-width:80px;">
+    <button class="secondary" type="button" onclick="this.parentElement.remove()">✕</button>`;
+  subjectsList.appendChild(row);
+}
+addSubjectRow("DSA", 3);
+addSubjectRow("AI", 2);
+addSubjectRow("Java", 2);
+
+document.getElementById("add-subject").addEventListener("click", () => addSubjectRow());
+
+document.getElementById("generate-plan").addEventListener("click", async () => {
+  const exam_date = document.getElementById("exam-date").value;
+  const hours_per_day = document.getElementById("hours-per-day").value;
+  const subjects = [...subjectsList.children].map((row) => ({
+    name: row.querySelector(".subj-name").value,
+    priority: parseInt(row.querySelector(".subj-priority").value, 10),
+  })).filter((s) => s.name.trim());
+
+  const output = document.getElementById("plan-output");
+  if (!exam_date || !subjects.length) {
+    output.innerHTML = "<p>Please set an exam date and at least one subject.</p>";
+    return;
+  }
+  output.innerHTML = "<p>Building your plan...</p>";
+
+  try {
+    const data = await apiPost("/api/planner", { exam_date, hours_per_day, subjects });
+    output.innerHTML = "";
+    data.plan.forEach((day) => {
+      const div = document.createElement("div");
+      div.className = "plan-day";
+      div.innerHTML = `<h3>Day ${day.day} · ${day.date}</h3>` +
+        day.sessions.map(s => `<div class="session-row"><span>${s.subject}</span><span>${s.hours} hr</span></div>`).join("");
+      output.appendChild(div);
+    });
+  } catch (e) {
+    output.innerHTML = "<p>Error: " + e.message + "</p>";
+  }
+});
+</script>
+{% endblock %}
