@@ -9,6 +9,6 @@ python-docx
 python-pptx
 sentence-transformers
 reportlab
-torch
-torchvision
 gunicorn
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch
