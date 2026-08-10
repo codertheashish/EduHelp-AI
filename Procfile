@@ -1,1 +1,1 @@
-web: gunicorn --bind 0.0.0.0:$PORT flask_app:app
+web: gunicorn flask_app:app --forwarded-allow-ips="*" --timeout 180
