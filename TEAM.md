@@ -9,7 +9,7 @@ Project Manager).
 |---------|-------------------------------|-------------------|
 | Ashish  | Project Manager               | `master` (merges everything) |
 | Sonali  | Frontend Developer            | `frontend`        |
-| Swayam  | Backend Developer              | `backend`         |
+| Swayam  | Backend Developer             | `backend`         |
 | Arpita  | AI Modules Developer          | `ai-modules`      |
 | Ravi    | Database & Quiz Developer     | `database-quiz`   |
 | Nirbhay | Testing & Documentation       | `testing-docs`    |
