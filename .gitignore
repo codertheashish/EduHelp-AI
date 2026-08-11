@@ -3,6 +3,7 @@ venv/
 __pycache__/
 *.pyc
 .env
+tests/
 
 # Uploaded documents and generated data -- keep the folder, ignore the contents
 uploads/*
