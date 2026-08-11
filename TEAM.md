@@ -40,7 +40,6 @@ The Flask server: routing, auth, request/response handling.
   (`/login`, `/auth/google`, `/auth/callback`, `/logout`), the
   `login_required` decorator, file upload handling
 - `utils/extract.py` — text extraction from PDF/DOCX/PPTX/TXT
-- `streamlit_app.py` — the alternate Streamlit UI (secondary, lower priority)
 
 Keep route names and JSON response shapes stable — frontend, AI modules, and
 quiz code all depend on them. If you must change a response shape, flag it
@@ -119,7 +118,8 @@ Quality and clarity.
 python -m venv venv
 source venv/bin/activate        # Windows: venv\Scripts\activate
 pip install -r requirements.txt
-cp .env.example .env            # fill in OPENROUTER_API_KEY, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
+cp .env            
+# Fill in OPENROUTER_API_KEY, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
 python flask_app.py
 ```
 

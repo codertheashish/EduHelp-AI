@@ -1,6 +1,5 @@
 flask
 python-dotenv
-streamlit
 requests
 authlib
 faiss-cpu
@@ -9,6 +8,5 @@ python-docx
 python-pptx
 sentence-transformers
 reportlab
-gunicorn
 --extra-index-url https://download.pytorch.org/whl/cpu
 torch

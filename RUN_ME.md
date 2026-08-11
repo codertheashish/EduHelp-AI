@@ -3,12 +3,12 @@
 ## How to run (Flask version)
 
 ```bash
-cd "EDU Help AI 1"
+cd "EduHelp AI"
 python -m venv venv
 source venv/bin/activate        # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 cp .env.example .env            # open .env and paste your OPENROUTER_API_KEY
-                                 # and your GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET
+                                # and your GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET
 python flask_app.py
 ```
 
